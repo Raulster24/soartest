@@ -40,7 +40,7 @@ mvn test
 
 - `src/main/java/` - Contains the source code for the automation scripts.
 - `src/test/java/` - Contains the test cases.
-- `src/main/resources/` - Configuration files for the test environment and the APK file.
+- `resources/` - Configuration files for the test environment and the APK file.
 - `target/` - Generated test reports and build artifacts.
 
 
