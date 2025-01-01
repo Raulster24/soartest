@@ -26,7 +26,7 @@ To set up the project locally, follow these steps:
     ```sh
     mvn install
     ```
-4. Place the APK file in the `src/main/resources/` directory.
+4. Place the APK file in a directory of your choice and update the configuration to point to the correct path. I have used the resources directry.
 5. Ensure TestNG is installed in your IDE or included in your Maven dependencies.
 
 ## Usage
