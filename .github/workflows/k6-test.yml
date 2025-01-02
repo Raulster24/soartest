@@ -22,6 +22,11 @@ jobs:
        source venv/bin/activate
        pip install -r performance-tests/Soar_Test/requirements.txt
 
+   - name: Copy files  
+     run: |
+        cp performance-tests/Soar_Test/database.db .
+        cp performance-tests/Soar_Test/schema.sql .
+
    - name: Create database
      run: |
        source venv/bin/activate
