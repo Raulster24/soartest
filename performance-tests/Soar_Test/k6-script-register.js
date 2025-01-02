@@ -12,6 +12,8 @@ export let options = {
         { duration: '1m', target: 0 },  // ramp down to 0 users
     ],
     thresholds: {
+        'http_req_duration': ['p(95)<500'], // 95% of requests must complete below 500ms
+        'http_req_failed': ['rate<0.1'], // Error rate should be less than 1%
         errors: ['count<10'], // Allow up to 10 errors
     },
 };
@@ -20,25 +22,21 @@ const BASE_URL = `${__ENV.FLASK_URL}`;
 
 export default function () {
     // Generate random data for each iteration
-    const fullName = randomString(10);
-    const userName = randomString(10);
-    const email = `${randomString(5)}@example.com`;
-    const password = randomString(10);
-    const phone = `1234567890`;
+    const payload = {
+        fullName: randomString(10),
+        userName: randomString(10),
+        email: `${randomString(5)}@test.com`,
+        password: randomString(10),
+        phone: '1234567890'
+    };
 
     // Load testing on /client_registeration
-    let registerRes = http.post(`${BASE_URL}/client_registeration`, {
-        fullName: fullName,
-        userName: userName,
-        email: email,
-        password: password,
-        phone: phone,
-    });
+    let registerRes = http.post(`${BASE_URL}/client_registeration`, payload);
 
     check(registerRes, {
         'register status is 200': (r) => r.status === 200,
         'register response contains User Registered': (r) => r.json().msg === 'User Registered',
     }) || errorCount.add(1);
 
-    sleep(1);
+    sleep(1); // sleep for 1 second to behave like a real user
 }

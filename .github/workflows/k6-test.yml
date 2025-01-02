@@ -8,10 +8,8 @@ on:
 jobs:
  k6-test:
    runs-on: ubuntu-latest
-
    steps:
    - uses: actions/checkout@v2
-
    - uses: actions/setup-python@v2
      with:
        python-version: '3.9'
@@ -24,18 +22,13 @@ jobs:
 
    - name: Copy files  
      run: |
-        cp performance-tests/Soar_Test/database.db .
-        cp performance-tests/Soar_Test/schema.sql .
+       cp performance-tests/Soar_Test/schema.sql .
+       cp performance-tests/Soar_Test/database.db .
 
    - name: Create database
      run: |
        source venv/bin/activate
        python performance-tests/Soar_Test/db_init.py
-
-   - name: Copy files  
-     run: |
-       cp performance-tests/Soar_Test/database.db .
-       cp performance-tests/Soar_Test/schema.sql .
 
    - name: Start Flask app
      run: |
@@ -51,12 +44,33 @@ jobs:
        sudo apt-get update
        sudo apt-get install k6
 
-   - name: Run k6 tests
-     run: k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-register.js
+   - name: Install Node.js and reporter
+     uses: actions/setup-node@v2
+     with:
+       node-version: '14'
+   - run: npm install -g k6-reporter
 
-   - name: Upload results
-     if: always()
+   - name: Run Load Test - Registration
+     run: |
+       mkdir -p k6-results
+       k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-register.js --out json=k6-results/register-results.json
+
+   - name: Run Stress Test - Login
+     run: |
+       k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-login.js --out json=k6-results/login-results.json
+
+   - name: Run BDD Test
+     run: |
+       k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-bdd.js --out json=k6-results/bdd-results.json
+
+   - name: Generate HTML Report
+     run: |
+       k6-reporter --input k6-results/ --output k6-results/performance-report.html --title "Performance Test Results"
+
+   - name: Upload Results
      uses: actions/upload-artifact@v3
      with:
-       name: k6-results
-       path: summary.json
+       name: k6-test-results
+       path: |
+         k6-results/performance-report.html
+         k6-results/*.json
