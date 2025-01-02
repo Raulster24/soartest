@@ -1,47 +1,57 @@
 name: k6 Performance Testing
 
 on:
-  push:
-  pull_request:
-  workflow_dispatch:
+ push:
+ pull_request:
+ workflow_dispatch:
 
 jobs:
-  k6-test:
-    runs-on: ubuntu-latest
+ k6-test:
+   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
+   steps:
+   - uses: actions/checkout@v2
 
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
+   - uses: actions/setup-python@v2
+     with:
+       python-version: '3.9'
 
-    - name: Install dependencies
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install -r performance-tests/Soar_Test/requirements.txt
+   - name: Install dependencies
+     run: |
+       python -m venv venv
+       source venv/bin/activate
+       pip install -r performance-tests/Soar_Test/requirements.txt
 
-    - name: Start Flask app
-      run: |
-        source venv/bin/activate
-        nohup python performance-tests/Soar_Test/task.py &
-        sleep 5
-        echo "FLASK_URL=$(curl -s http://localhost:5001 | grep -o 'http://[0-9.]*:[0-9]*')" >> $GITHUB_ENV
+   - name: Create database
+     run: |
+       source venv/bin/activate
+       python performance-tests/Soar_Test/db_init.py
 
-    - name: Install k6
-      run: |
-        curl -s https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-        sudo apt-get update
-        sudo apt-get install k6
+   - name: Copy files  
+     run: |
+       cp performance-tests/Soar_Test/database.db .
+       cp performance-tests/Soar_Test/schema.sql .
 
-    - name: Run k6 tests
-      run: k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-register.js
+   - name: Start Flask app
+     run: |
+       source venv/bin/activate
+       nohup python performance-tests/Soar_Test/task.py > flask.log 2>&1 &
+       sleep 5
+       echo "FLASK_URL=$(grep -o 'http://[0-9.]*:[0-9]*' flask.log)" >> $GITHUB_ENV
 
-    - name: Upload results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: k6-results
-        path: summary.json
+   - name: Install k6
+     run: |
+       curl -s https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
+       echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+       sudo apt-get update
+       sudo apt-get install k6
+
+   - name: Run k6 tests
+     run: k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-register.js
+
+   - name: Upload results
+     if: always()
+     uses: actions/upload-artifact@v3
+     with:
+       name: k6-results
+       path: summary.json
