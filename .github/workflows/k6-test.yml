@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.9'
 
@@ -28,25 +26,22 @@ jobs:
       run: |
         source venv/bin/activate
         nohup python performance-tests/Soar_Test/task.py &
+        sleep 5
+        echo "FLASK_URL=$(curl -s http://localhost:5001 | grep -o 'http://[0-9.]*:[0-9]*')" >> $GITHUB_ENV
 
-    - name: Add k6 repository and install k6
+    - name: Install k6
       run: |
+        curl -s https://dl.k6.io/key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/k6-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
         sudo apt-get update
-        sudo apt-get install -y gnupg software-properties-common
-        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 33C235A34C46AA3FFB293709A328C3A2C3C45C06
-        echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-        sudo apt-get update
-        sudo apt-get install -y k6
+        sudo apt-get install k6
 
-    - name: Run k6 script
-      run: k6 run performance-tests/Soar_Test/k6-script-register.js
+    - name: Run k6 tests
+      run: k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-register.js
 
-    - name: Display k6 logs
-      run: docker-compose logs k6
-
-    - name: Upload k6 results
+    - name: Upload results
       if: always()
       uses: actions/upload-artifact@v3
       with:
         name: k6-results
-        path: /path/to/k6/results
+        path: summary.json

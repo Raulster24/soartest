@@ -16,7 +16,7 @@ export let options = {
     },
 };
 
-const BASE_URL = 'http://localhost:5001';
+const BASE_URL = `${__ENV.FLASK_URL}`;
 
 export default function () {
     // Generate random data for each iteration
