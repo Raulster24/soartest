@@ -56,7 +56,7 @@ jobs:
       K6_WEB_DASHBOARD_EXPORT: "k6-results/dashboard-report.html"
      run: |
         mkdir -p k6-results
-        k6 run --out html=k6-results/html-report/index.html performance-tests/Soar_Test/k6-script-register.js
+        k6 run performance-tests/Soar_Test/k6-script-register.js
 
 #   - name: Run Stress Test - Login
 #     run: |
