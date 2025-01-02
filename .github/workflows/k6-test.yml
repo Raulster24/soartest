@@ -22,18 +22,18 @@ jobs:
       run: |
         python -m venv venv
         source venv/bin/activate
-        pip install -r requirements.txt
+        pip install -r performance-tests/Soar_Test/requirements.txt
 
     - name: Start Flask app
       run: |
         source venv/bin/activate
-        nohup python task.py &
+        nohup python performance-tests/Soar_Test/task.py &
 
     - name: Install k6
       run: sudo apt-get update && sudo apt-get install -y k6
 
     - name: Run k6 script
-      run: k6 run k6-script-register.js
+      run: k6 run performance-tests/Soar_Test/k6-script-register.js
 
     - name: Display k6 logs
       run: docker-compose logs k6
