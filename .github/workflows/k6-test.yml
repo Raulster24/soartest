@@ -52,6 +52,7 @@ jobs:
 
    - name: Run Load Test - Registration
      run: |
+        mkdir -p k6-results
         k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-register.js --out json=k6-results/register-results.json --summary-export=k6-results/register-summary.json
 
    - name: Run Stress Test - Login
