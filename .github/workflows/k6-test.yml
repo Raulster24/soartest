@@ -51,6 +51,9 @@ jobs:
    - run: sudo npm install -g k6-html-reporter
 
    - name: Run Load Test - Registration
+     env:
+      K6_WEB_DASHBOARD: "true"
+      K6_WEB_DASHBOARD_EXPORT: "k6-results/dashboard-report.html"
      run: |
         mkdir -p k6-results
         k6 run --out html=k6-results/html-report/index.html performance-tests/Soar_Test/k6-script-register.js
@@ -68,4 +71,4 @@ jobs:
      uses: actions/upload-artifact@v3
      with:
        name: k6-test-results
-       path: k6-results/html-report
+       path: k6-results/dashboard-report.html
