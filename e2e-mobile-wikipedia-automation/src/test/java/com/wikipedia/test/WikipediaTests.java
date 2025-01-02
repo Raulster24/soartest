@@ -20,19 +20,19 @@ import io.appium.java_client.android.options.UiAutomator2Options;
 
 public class WikipediaTests {
 
-    private AndroidDriver driver; // Change to AndroidDriver
+    private AndroidDriver driver;
     private WebDriverWait wait;
 
     @BeforeMethod
     public void setUp() throws MalformedURLException {
-        System.out.println("Current Working Directory: " + System.getProperty("user.dir"));
+        String appPath = System.getProperty("user.dir") + "\\e2e-mobile-wikipedia-automation\\resources\\WikipediaSample.apk";
 
         UiAutomator2Options options = new UiAutomator2Options()
-                .setDeviceName("emulator-5554") // change it to emulator name using command 'adb devices'
+                .setDeviceName("emulator-5554") // change it to your emulator name using command 'adb devices'
                 .setPlatformName("Android")
                 .setPlatformVersion("11.0")
                 .setAutomationName("UiAutomator2")
-                .setApp("C:\\Users\\rsrivastava\\source\\repos\\soartest\\e2e-mobile-wikipedia-automation\\resources\\WikipediaSample.apk")
+                .setApp(appPath)
                 .setNoReset(true)
                 .setAutoGrantPermissions(true)
                 .setAppWaitActivity("org.wikipedia.main.MainActivity")
