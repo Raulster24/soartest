@@ -1,0 +1,8 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.debug.settings.hotCodeReplace": "auto",
+    "java.test.config": {
+        "workingDirectory": "${workspaceFolder}"
+    }
+}
