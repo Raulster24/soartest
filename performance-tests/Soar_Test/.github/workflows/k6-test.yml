@@ -1,0 +1,43 @@
+name: k6 Performance Testing
+
+on: [push, pull_request]
+
+jobs:
+  k6-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+    - name: Start Flask app
+      run: |
+        source venv/bin/activate
+        nohup python task.py &
+
+    - name: Install k6
+      run: sudo apt-get update && sudo apt-get install -y k6
+
+    - name: Run k6 script
+      run: k6 run k6-script-register.js
+
+    - name: Display k6 logs
+      run: docker-compose logs k6
+
+    - name: Upload k6 results
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: k6-results
+        path: /path/to/k6/results
