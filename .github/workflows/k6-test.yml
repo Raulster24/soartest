@@ -53,7 +53,7 @@ jobs:
    - name: Run Load Test - Registration
      run: |
         mkdir -p k6-results
-        k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-register.js --out json=k6-results/register-results.json --summary-export=k6-results/register-summary.json
+        k6 run --out html=k6-results/html-report/index.html performance-tests/Soar_Test/k6-script-register.js
 
 #   - name: Run Stress Test - Login
 #     run: |
@@ -64,14 +64,8 @@ jobs:
 #        k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-bdd.js --out json=k6-results/bdd-results.json --summary-export=k6-results/bdd-summary.json
 
 
-   - name: Generate HTML Report
-     run: |
-       k6-html-reporter -i k6-results/ -o k6-results/html-report --reportName "Flask API Performance Test Results"
-
    - name: Upload Results
      uses: actions/upload-artifact@v3
      with:
        name: k6-test-results
-       path: |
-         k6-results/performance-report.html
-         k6-results/*.json
+       path: k6-results/html-report
