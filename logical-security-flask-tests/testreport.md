@@ -16,18 +16,17 @@ Following are the list of the logical and security testing finding, Please also 
 | ID | Type | Issue | Risk | Description | Impact | PoC/ Code Areas |
 |----|------|-------|------|-------------|---------|-----|
 | 5 | Security | Input Validation | 7.5 | Missing validation | Data injection | Special chars - refer security test 3 screenshot |
-| 7 | Security | No Session Management | 7.0 | No token expiry | Persistent access | `payload = {'userName':userName, 'email':email, 'role':role}`<br>`token = generateJWT(payload)` |
-| 8 | Security | No Input Sanitization | 7.5 | Raw form input | XSS possible | Script injection |
-| 9 | Security | No CSRF Protection | 7.0 | Missing tokens | CSRF attacks | No protection |
+| 8 | Security | No Input Sanitization | 7.5 | Raw form input | XSS possible | No validation, possible script injection `fullName = request.form['fullName']`<br>`userName = request.form['userName']`<br>`email = request.form['email']` |
+| 9 | Security | No CSRF Protection | 7.0 | Missing tokens | CSRF attacks | No protection, No request origin verification |
 | 10 | Logical | No Account Lockout | 7.0 | Unlimited attempts | Brute force | Multiple tries |
-| 11 | Security | JWT Issues | 7.5 | Algorithm risks | Token forge | Algorithm None |
+| 11 | Security | JWT Issues | 7.5 | Algorithm risks | Token forge | Algorithm not explicitly set |
 
 ## Medium (CVSS 4.0-6.9)
 
 | ID | Type | Issue | Risk | Description | Impact | PoC |
 |----|------|-------|------|-------------|---------|-----|
 | 12 | Security | No Rate Limiting | 5.3 | No limits | DoS possible | Flood requests |
-| 13 | Security | Insecure JWT | 5.0 | Unverified data | Token tampering | Modify payload |
+| 13 | Security | Insecure JWT | 5.0 | Unverified data | Token tampering | Modify payload - Role can be tampered by modifying token |
 | 14 | Logical | Email Format | 5.5 | No validation | Invalid data | Wrong format |
 | 15 | Security | JWT Data Leak | 5.0 | Sensitive info | Info disclosure | View token data |
 | 16 | Logical | Username Duplicates | 5.0 | No uniqueness | Confusion | Same usernames |
