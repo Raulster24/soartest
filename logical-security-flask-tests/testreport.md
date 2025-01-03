@@ -6,10 +6,10 @@
 |----|------|-------|------|-------------|---------|-----|
 | 1 | Security | SQL Injection | 9.8 | Direct string concatenation | Database breach | `userName=" OR "1"="1"` |
 | 2 | Security | Plaintext Passwords | 9.1 | No password hashing | Credential exposure |
-`dbCursor.execute("INSERT INTO users (..., password, ...) VALUES (?, ?, ?, ?, ?, ?)",
-    (..., password, ...)` |
-| 3 | Logical | Username-only Auth | 9.5 | No password required | Account takeover | Username only login |
+`dbCursor.execute("INSERT INTO users (..., password, ...) VALUES (?, ?, ?, ?, ?, ?)", (..., password, ...)` |
+| 3 | Logical | Username-only Auth | 9.5 | No password required | Account takeover | Username only login | `elif userName != '':dbData = dbCursor.execute(qUser).fetchall()` |
 | 4 | Logical | Missing Password Check | 9.0 | No validation | Auth bypass | Skip password |
+`elif userName != '': qUser = 'select privillage from users where userName = "' + userName +'"'dbData = dbCursor.execute(qUser).fetchall()`
 
 ## High (CVSS 7.0-8.9) 
 
