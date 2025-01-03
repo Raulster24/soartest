@@ -2,10 +2,12 @@
 
 ## Critical (CVSS 9.0-10.0)
 
-| ID | Type | Issue | Risk | Description | Impact | PoC |
+| ID | Type | Issue | Risk | Description | Impact | PoC/ Code area |
 |----|------|-------|------|-------------|---------|-----|
 | 1 | Security | SQL Injection | 9.8 | Direct string concatenation | Database breach | `userName=" OR "1"="1"` |
 | 2 | Security | Plaintext Passwords | 9.1 | No password hashing | Credential exposure | N/A |
+`dbCursor.execute("INSERT INTO users (..., password, ...) VALUES (?, ?, ?, ?, ?, ?)",
+    (..., password, ...)` |
 | 3 | Logical | Username-only Auth | 9.5 | No password required | Account takeover | Username only login |
 | 4 | Logical | Missing Password Check | 9.0 | No validation | Auth bypass | Skip password |
 
