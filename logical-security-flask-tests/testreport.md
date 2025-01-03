@@ -1,8 +1,10 @@
 # Security and Logical Vulnerability Report
 
+Following are the list of the logical and security testing finding, Please also have a look at the attached screenshots in this directory for actual tests performed as evidence
+
 ## Critical (CVSS 9.0-10.0)
 
-| ID | Type | Issue | Risk | Description | Impact | PoC/ Code area |
+| ID | Type | Issue | Risk | Description | Impact | PoC / Code Areas |
 |----|------|-------|------|-------------|---------|-----|
 | 1 | Security | SQL Injection | 9.8 | Direct string concatenation | Database breach | `userName=" OR "1"="1"` |
 | 2 | Security | Plaintext Passwords | 9.1 | No password hashing | Credential exposure | `dbCursor.execute("INSERT INTO users (..., password, ...) VALUES (?, ?, ?, ?, ?, ?)", (..., password, ...)` |
@@ -11,11 +13,10 @@
 
 ## High (CVSS 7.0-8.9) 
 
-| ID | Type | Issue | Risk | Description | Impact | PoC |
+| ID | Type | Issue | Risk | Description | Impact | PoC/ Code Areas |
 |----|------|-------|------|-------------|---------|-----|
-| 5 | Security | Input Validation | 7.5 | Missing validation | Data injection | Special chars |
-| 6 | Logical | Auth Logic Flaw | 7.2 | Username bypass | Account access | Skip validation |
-| 7 | Security | No Session Management | 7.0 | No token expiry | Persistent access | N/A |
+| 5 | Security | Input Validation | 7.5 | Missing validation | Data injection | Special chars - refer security test 3 screenshot |
+| 7 | Security | No Session Management | 7.0 | No token expiry | Persistent access | `payload = {'userName':userName, 'email':email, 'role':role}`<br>`token = generateJWT(payload)` |
 | 8 | Security | No Input Sanitization | 7.5 | Raw form input | XSS possible | Script injection |
 | 9 | Security | No CSRF Protection | 7.0 | Missing tokens | CSRF attacks | No protection |
 | 10 | Logical | No Account Lockout | 7.0 | Unlimited attempts | Brute force | Multiple tries |
