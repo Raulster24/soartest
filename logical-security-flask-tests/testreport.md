@@ -5,7 +5,7 @@
 | ID | Type | Issue | Risk | Description | Impact | PoC/ Code area |
 |----|------|-------|------|-------------|---------|-----|
 | 1 | Security | SQL Injection | 9.8 | Direct string concatenation | Database breach | `userName=" OR "1"="1"` |
-| 2 | Security | Plaintext Passwords | 9.1 | No password hashing | Credential exposure | N/A |
+| 2 | Security | Plaintext Passwords | 9.1 | No password hashing | Credential exposure |
 `dbCursor.execute("INSERT INTO users (..., password, ...) VALUES (?, ?, ?, ?, ?, ?)",
     (..., password, ...)` |
 | 3 | Logical | Username-only Auth | 9.5 | No password required | Account takeover | Username only login |
