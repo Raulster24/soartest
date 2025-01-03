@@ -15,16 +15,23 @@ export let options = {
    }
 };
 
-const adminCreds = {
-   email: 'admin@test.com',
-   password: 'admin@1234'
-};
-
 export default function () {
-   let res = http.post(`${__ENV.FLASK_URL}/client_login`, adminCreds);
+    const payload = {
+        userName: 'admin',
+        email: 'admin@test.com', 
+        password: 'admin@1234'
+    };
+
+    const params = {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+
+   let res = http.post(`${__ENV.FLASK_URL}/client_login`, payload, params);
    check(res, {
-       'login successful': (r) => r.status === 200,
-       'correct response': (r) => r.json().msg === 'Login Success'
+    'status is 200': (r) => r.status === 200,
+    'token present in response': (r) => JSON.parse(r.body).hasOwnProperty('token')
    });
    sleep(1);
 }

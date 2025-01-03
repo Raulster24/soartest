@@ -53,22 +53,28 @@ jobs:
    - name: Run Load Test - Registration
      env:
       K6_WEB_DASHBOARD: "true"
-      K6_WEB_DASHBOARD_EXPORT: "k6-results/dashboard-report.html"
+      K6_WEB_DASHBOARD_EXPORT: "k6-results/registration-loadtest-report.html"
      run: |
         mkdir -p k6-results
         k6 run performance-tests/Soar_Test/k6-script-register.js
 
-#   - name: Run Stress Test - Login
-#     run: |
-#        k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-login.js --out json=k6-results/login-results.json --summary-export=k6-results/login-summary.json
+   - name: Run Stress Test - Login
+     env:
+      K6_WEB_DASHBOARD: "true"
+      K6_WEB_DASHBOARD_EXPORT: "k6-results/login-stresstest-report.html"
+     run: |
+        k6 run performance-tests/Soar_Test/k6-script-login.js
 
-#   - name: Run BDD Test
-#     run: |
-#        k6 run -e FLASK_URL=$FLASK_URL performance-tests/Soar_Test/k6-script-bdd.js --out json=k6-results/bdd-results.json --summary-export=k6-results/bdd-summary.json
+   - name: Run BDD Test
+     env:
+      K6_WEB_DASHBOARD: "true"
+      K6_WEB_DASHBOARD_EXPORT: "k6-results/bddtest-report.html"
+     run: |
+        k6 run performance-tests/Soar_Test/k6-script-bdd.js
 
 
    - name: Upload Results
      uses: actions/upload-artifact@v3
      with:
        name: k6-test-results
-       path: k6-results/dashboard-report.html
+       path: k6-results/
