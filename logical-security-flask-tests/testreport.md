@@ -2,6 +2,8 @@
 
 Following are the list of the logical and security testing finding, Please also have a look at the attached screenshots in this directory for actual tests performed as evidence
 
+CVSS calculator - https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator
+
 ## Critical (CVSS 9.0-10.0)
 
 | ID | Type | Issue | Risk | Description | Impact | PoC / Code Areas |
