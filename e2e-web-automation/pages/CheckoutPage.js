@@ -15,45 +15,22 @@ class CheckoutPage {
         this.totalPrice = 'span.total-price';
         this.checkoutButton = 'button#checkout';
         this.addressField = 'input#address';
-        this.deliveryMethodSelect = 'select#delivery-method';
+        this.deliveryMethodSelect = 'mat-cell[role="cell"] .fa-rocket';
         this.paymentScreen = 'div.payment-screen';
         this.walletBalance = 'span.wallet-balance';
         this.addCardButton = 'button#add-card';
         this.cardNumberField = 'input#card-number';
-        this.continuePurchaseButton = 'button#continue-purchase';
+        this.continueToPaymentButton = 'button.nextButton';
     }
 
-    async login(username, password) {
-        await this.page.click(this.loginButton);
-        await this.page.fill(this.usernameField, username);
-        await this.page.fill(this.passwordField, password);
-        await this.page.click('button#submit-login');
-    }
-
-    async addProductsToBasket() {
-        for (let i = 0; i < 5; i++) {
-            await this.page.click(this.productAddButtons);
-            await expect(this.page.locator(this.successPopup)).toBeVisible();
-        }
-        await expect(this.page.locator(this.cartNumber)).toHaveText('5');
-    }
-
-    async navigateToBasket() {
-        await this.page.click(this.basketButton);
-    }
-
-    async modifyBasket() {
-        await this.page.fill(this.quantityField, '2');
-        await this.page.click(this.deleteButton);
-        const newTotalPrice = await this.page.locator(this.totalPrice).textContent();
-        expect(newTotalPrice).not.to.equal(this.previousTotalPrice);
-    }
-
-    async checkout() {
+    async clickOnCheckoutButton() {
         await this.page.click(this.checkoutButton);
-        await this.page.fill(this.addressField, '123 Main St');
+    }
+
+    async selectDeliveryModeAndContinue() {
         await this.page.selectOption(this.deliveryMethodSelect, 'standard');
-        await expect(this.page.locator(this.paymentScreen)).toBeVisible();
+        await this.page.click(this.continueToPaymentButton);
+        await this.page.waitForTimeout(2000); // Wait for the page to load
     }
 
     async addCardAndPurchase() {

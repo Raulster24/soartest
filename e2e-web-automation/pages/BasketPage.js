@@ -6,7 +6,7 @@ class BasketPage {
         this.cartNumber = page.locator('.cart-number');
         this.successPopup = page.locator('.success-popup');
         this.basketItems = page.locator('.basket-items');
-        this.totalPrice = page.locator('.total-price');
+        this.totalPrice = page.locator('#price');
         this.checkoutButton = page.locator('.checkout-button');
         this.addressForm = page.locator('.address-form');
         this.deliveryMethod = page.locator('.delivery-method');
@@ -15,31 +15,34 @@ class BasketPage {
         this.addCardButton = page.locator('.add-card-button');
     }
 
-    async login(username, password) {
-        await this.page.goto('https://example.com/login');
-        await this.page.fill('#username', username);
-        await this.page.fill('#password', password);
-        await this.page.click('#login-button');
+    async clickOnBasketToNavigateToBasketPage() {
+        await this.page.click('button[aria-label="Show the shopping cart"]');
     }
 
-    async addProductsToBasket(products) {
-        for (let product of products) {
-            await this.page.goto(`https://example.com/product/${product}`);
-            await this.page.click('.add-to-basket-button');
-            await expect(this.successPopup).toBeVisible();
-        }
-        await expect(this.cartNumber).toHaveText('5');
+    async increaseProductQuantity() {
+        await this.page.locator('button[mat-icon-button]:nth-of-type(2)').click();
+        await this.page.waitForTimeout(2000); // Wait for the price to update
     }
 
-    async navigateToBasket() {
-        await this.page.goto('https://example.com/basket');
+    async deleteProduct() {
+        const deleteButton = await this.page.locator(".mat-focus-indicator.mat-icon-button.mat-button-base");
+        await deleteButton.nth(2).click();  
+        await this.page.waitForTimeout(2000);  // Wait for the price to update
     }
 
-    async modifyBasket() {
-        await this.page.click('.increase-quantity-button');
-        await this.page.click('.delete-product-button');
-        await expect(this.totalPrice).toHaveTextChanged();
+    async fetchInitialTotalPrice() {
+        const priceText = await this.page.locator('#price').innerText();
+        const price = priceText.match(/\d+/)[0];  // Extract the number from the text
+        return price;
     }
+
+    async verifyTotalPriceChanged(initialTotalPrice) {
+        await this.page.waitForTimeout(2000); // Wait for the price to update
+        const updatedTotalPriceText = await this.totalPrice.innerText();
+        const updatedTotalPrice = updatedTotalPriceText.match(/\d+/)[0];  // Extract the number from the text
+        expect(initialTotalPrice).not.toBe(updatedTotalPrice);
+    }
+
 
     async checkout() {
         await this.page.click(this.checkoutButton);

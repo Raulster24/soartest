@@ -89,7 +89,7 @@ test('Task 3 - User registration and login', async ({ page }) => {
 test('Task 4 - Add products to basket and complete purchase', async ({ page }) => {
   // Login to the application
   await loginPage.navigateTo();
-  await loginPage.login(userData.email, userData.password);
+  await loginPage.login(testUserData.email, testUserData.password);
 
   // Add five different products to the basket
   for (let i = 0; i < 5; i++) {
@@ -102,46 +102,46 @@ test('Task 4 - Add products to basket and complete purchase', async ({ page }) =
 
   // Navigate to the basket
   const basketPage = new BasketPage(page);
-  await basketPage.navigateTo();
+  await basketPage.clickOnBasketToNavigateToBasketPage();
 
-  // Increase the number of the first product
-  await basketPage.increaseProductQuantity(0);
+  // Fetch the initial total price
+  const initialTotalPrice = await basketPage.fetchInitialTotalPrice();
 
-  // Delete the first product from the basket
-  await basketPage.deleteProduct(0);
+  await basketPage.increaseProductQuantity();
 
-  // Assert that the total price has been changed
-  await basketPage.verifyTotalPriceChanged();
+  await basketPage.deleteProduct();
+
+  // Verify that the total price has been changed
+  await basketPage.verifyTotalPriceChanged(initialTotalPrice);
 
   // Proceed to checkout
   const checkoutPage = new CheckoutPage(page);
-  await checkoutPage.navigateTo();
+  await checkoutPage.clickOnCheckoutButton;
+
+  // Add a new address, select and continue to payment page
   const addressPage = new AddressPage(page);
-  await addressPage.addAddress({
-    country: 'USA',
-    name: 'John Doe',
-    mobileNumber: '1234567890',
-    zipCode: '12345',
-    address: '123 Main St',
-    city: 'Anytown',
-    state: 'CA'
-  });
+  await addressPage.addAddress();
+  await addressPage.selectAddedAddress();
+  await addressPage.clickOnContinueButton();
 
   // Select delivery method
-  await checkoutPage.selectDeliveryMethod();
+  await checkoutPage.selectDeliveryModeAndContinue();
 
   // Navigate to payment screen
   const paymentPage = new PaymentPage(page);
-  await paymentPage.navigateTo();
 
   // Assert that wallet has no money and add credit card information
-  await paymentPage.verifyWalletEmpty();
+  await paymentPage.assertWalletBalanceIsZero();
   await paymentPage.addCreditCard({
+    name: 'John Doe',
     cardNumber: '4111111111111111',
-    expiryDate: '12/25',
-    cvv: '123'
+    expiryDate: '12',
+    expiryYear: '2080'
   });
+  await paymentPage.selectAddedCard();
 
-  // Continue purchase
+ await paymentPage.navigateToReviewPage();
+ await paymentPage.clickPayButton();
   await paymentPage.continuePurchase();
+  await paymentPage.verifyPaymentSuccess();
 });
