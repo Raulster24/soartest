@@ -20,7 +20,8 @@ class BasketPage {
     }
 
     async increaseProductQuantity() {
-        await this.page.locator('button[mat-icon-button]:nth-of-type(2)').click();
+        const increaseButton = await this.page.locator('button[mat-icon-button]');
+        await increaseButton.nth(1).click();
         await this.page.waitForTimeout(2000); // Wait for the price to update
     }
 

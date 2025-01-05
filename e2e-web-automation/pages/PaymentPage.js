@@ -3,11 +3,11 @@ const { expect } = require('@playwright/test');
 class PaymentPage {
     constructor(page) {
         this.page = page;
-        this.nameInput = page.locator('#mat-input-1');
-        this.cardNumberInput = page.locator('#mat-input-2');
-        this.expiryMonth = page.locator('#mat-input-3');
-        this.expiryYear = page.locator('#mat-input-4');
-        this.cvvInput = page.locator('#mat-input-5');
+        this.addNewCard = page.locator('.mat-expansion-panel-header-title');
+        this.nameInput = page.locator('mat-form-field:has(mat-label:text("Name")) input');
+        this.cardNumberInput = page.locator('mat-form-field:has(mat-label:text("Card Number")) input');
+        this.expiryMonth = page.locator('mat-form-field:has(mat-label:text("Expiry Month")) select');
+        this.expiryYear = page.locator('mat-form-field:has(mat-label:text("Expiry Year")) select');
         this.submitButton = page.locator('#submitButton');
         this.payButton = page.locator('button#checkoutButton');
         this.walletBalance = page.locator('span.confirmation.card-title');
@@ -17,22 +17,19 @@ class PaymentPage {
         await this.cardNumberInput.fill(cardNumber);
     }
 
-    async enterCVV(cvv) {
-        await this.cvvInput.fill(cvv);
-    }
-
     async clickPayButton() {
         await this.payButton.click();
     }
 
-    async makePayment(name, cardNumber, expiryMonth, expiryYear, cvv) {
+    async addCreditCard(name, cardNumber, expiryMonth, expiryYear) {
+        await this.addNewCard.nth(0).click();
         await this.nameInput.fill(name);
         await this.enterCardNumber(cardNumber);
     
         // Select expiry month
-        await this.expiryMonth.selectOption({ value: expiryMonth.toString() });
+        await this.expiryMonth.selectOption(expiryMonth);
     
-        await this.expiryYear.selectOption({ value: expiryYear.toString() });
+        await this.expiryYear.selectOption(expiryYear);
         await this.submitButton.click();
         await this.page.waitForTimeout(2000); // Wait for some time
     }
@@ -45,16 +42,16 @@ class PaymentPage {
     }
 
     async assertWalletBalanceIsZero() {
-        const balanceText = (await this.page.walletBalance.innerText()).trim();
+        const balanceText = (await this.walletBalance.innerText()).trim();
         expect(balanceText).toBe('0.00');
     }
 
     async navigateToReviewPage() {
-        await page.locator('button[aria-label="Proceed to review"]').click();
+        await this.page.locator('button[aria-label="Proceed to review"]').click();
     }
 
     async verifyPaymentSuccess() {
-        await expect(this.page.locator('span.confirmation.card-title')).toHaveText('Payment successful');
+        await expect(this.page.locator('h1.confirmation')).toHaveText('Thank you for your purchase!');
     }
 }
 

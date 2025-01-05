@@ -4,13 +4,13 @@ class AddressPage {
     constructor(page) {
         this.page = page;
         this.addAddressButton = page.locator('button[aria-label="Add a new address"]');
-        this.countryInput = page.locator('#mat-input-3');
-        this.nameInput = page.locator('#mat-input-4');
-        this.mobileNumberInput = page.locator('#mat-input-5');
-        this.zipCodeInput = page.locator('#mat-input-6');
-        this.addressInput = page.locator('#mat-input-7');
-        this.cityInput = page.locator('#mat-input-8');
-        this.stateInput = page.locator('#mat-input-9');
+        this.countryInput = page.locator('input[placeholder="Please provide a country."]');
+        this.nameInput = page.locator('input[placeholder="Please provide a name."]');
+        this.mobileNumberInput = page.locator('input[placeholder="Please provide a mobile number."]');
+        this.zipCodeInput = page.locator('input[placeholder="Please provide a ZIP code."]');
+        this.addressInput = page.locator('textarea#address');
+        this.cityInput = page.locator('input[placeholder="Please provide a city."]');
+        this.stateInput = page.locator('input[placeholder="Please provide a state."]');
         this.submitButton = page.locator('button[type="submit"]');
     }
 
@@ -43,6 +43,7 @@ class AddressPage {
 
     async addAddress() {
         await this.clickOnAddAddressButton();
+        await this.page.waitForTimeout(2000);// wait for the page to load
         await this.fillAddressForm();
         await this.submitForm();
         await this.page.waitForTimeout(2000);// wait for the page to load

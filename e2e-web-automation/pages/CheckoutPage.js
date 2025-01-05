@@ -13,7 +13,7 @@ class CheckoutPage {
         this.quantityField = 'input.quantity';
         this.deleteButton = 'button.delete';
         this.totalPrice = 'span.total-price';
-        this.checkoutButton = 'button#checkout';
+        this.checkoutButton = 'button#checkoutButton';
         this.addressField = 'input#address';
         this.deliveryMethodSelect = 'mat-cell[role="cell"] .fa-rocket';
         this.paymentScreen = 'div.payment-screen';
@@ -28,7 +28,7 @@ class CheckoutPage {
     }
 
     async selectDeliveryModeAndContinue() {
-        await this.page.selectOption(this.deliveryMethodSelect, 'standard');
+        await this.page.click(this.deliveryMethodSelect);
         await this.page.click(this.continueToPaymentButton);
         await this.page.waitForTimeout(2000); // Wait for the page to load
     }

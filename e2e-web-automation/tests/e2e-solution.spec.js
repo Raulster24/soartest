@@ -116,7 +116,8 @@ test('Task 4 - Add products to basket and complete purchase', async ({ page }) =
 
   // Proceed to checkout
   const checkoutPage = new CheckoutPage(page);
-  await checkoutPage.clickOnCheckoutButton;
+  await checkoutPage.clickOnCheckoutButton();
+  await page.waitForTimeout(2000);
 
   // Add a new address, select and continue to payment page
   const addressPage = new AddressPage(page);
@@ -132,16 +133,10 @@ test('Task 4 - Add products to basket and complete purchase', async ({ page }) =
 
   // Assert that wallet has no money and add credit card information
   await paymentPage.assertWalletBalanceIsZero();
-  await paymentPage.addCreditCard({
-    name: 'John Doe',
-    cardNumber: '4111111111111111',
-    expiryDate: '12',
-    expiryYear: '2080'
-  });
+  await paymentPage.addCreditCard('John Doe','4111111111111111','12','2080');
   await paymentPage.selectAddedCard();
 
  await paymentPage.navigateToReviewPage();
  await paymentPage.clickPayButton();
-  await paymentPage.continuePurchase();
-  await paymentPage.verifyPaymentSuccess();
+ await paymentPage.verifyPaymentSuccess();
 });
